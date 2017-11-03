@@ -12,6 +12,8 @@ users', setting a limit for incoming connections.
 """
 
 import db
+import os.path
+import settings
 
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.authorizers import AuthenticationFailed
@@ -26,12 +28,21 @@ class DeviceAuthorizer(DummyAuthorizer):
         """Validate device."""
         if not db.Device.is_valid(label=username, token=password):
             raise AuthenticationFailed()
+        if not self.has_user(username):
+            perm = 'elawdm'
+            homedir = self.get_home_dir(username)
+            self.add_user(username, password, homedir, perm)
 
     def get_home_dir(self, username):
-        """TODO"""
+        """Returns path where ftp files are saved for this user."""
+        homedir = os.path.join(settings.FTP_FILES, username)
+        if not os.path.isdir(homedir):
+            os.makedirs(homedir)
+        return homedir
 
     def get_msg_login(self, username):
         """TODO"""
+        return f"Welcome aboard {username}"
 
 
 def main():
