@@ -3,6 +3,7 @@
 from pony.orm import (
     Set,
     Database,
+    Optional,
     Required,
     db_session,
     set_sql_debug,
@@ -20,11 +21,11 @@ class Device(db.Entity):
     location = Required(str)
     observers = Set('Observer')
 
-    @classmethod
+    @staticmethod
     @db_session
-    def new(cls, token, label, active, location):
+    def new(token, label, active, location):
         """Create a new device."""
-        cls(token=token, label=label, active=active, location=location)
+        Device(token=token, label=label, active=active, location=location)
 
     @staticmethod
     @db_session
@@ -36,7 +37,7 @@ class Device(db.Entity):
 class Observer(db.Entity):
     """A device observer."""
     label = Required(str)
-    telegram_id = int
+    telegram_id = Optional(int)
     device = Required(Device)
 
 
