@@ -18,7 +18,7 @@ class Device(db.Entity):
     label = Required(str)
     active = Required(bool)
     location = Required(str)
-    users = Set('User')
+    observers = Set('Observer')
 
     @classmethod
     @db_session
@@ -26,12 +26,16 @@ class Device(db.Entity):
         """Create a new device."""
         cls(token=token, label=label, active=active, location=location)
 
+    @staticmethod
+    @db_session
+    def is_valid(label, token):
+        """Return bool if device is valid."""
+        return bool(Device.get(token=token, label=label))
 
-class User(db.Entity):
-    """A user."""
-    alias = Required(str)
-    first_name = str
-    last_name = str
+
+class Observer(db.Entity):
+    """A device observer."""
+    label = Required(str)
     telegram_id = int
     device = Required(Device)
 
