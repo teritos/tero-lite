@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-# This code was taken from: 
+# This code was taken from:
 # https://github.com/giampaolo/pyftpdlib/blob/master/demo/basic_ftpd.py
-# which has a MIT license and has the following copyright: 
+# which has a MIT license and has the following copyright:
 # Copyright (C) 2007 Giampaolo Rodola' <g.rodola@gmail.com>.
 # Modified by: Emiliano Dalla Verde Marcozzi <edvm@fedoraproject.org>
 # to work for Tero Lite
@@ -11,9 +11,9 @@
 users', setting a limit for incoming connections.
 """
 
-import db
-import os.path
 import settings
+import os.path
+import db
 
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.authorizers import AuthenticationFailed
@@ -26,7 +26,7 @@ class DeviceAuthorizer(DummyAuthorizer):
 
     def validate_authentication(self, username, password, handler):
         """Validate device."""
-        if not db.Device.is_valid(label=username, token=password):
+        if not db.Device.is_valid_using(username, password):
             raise AuthenticationFailed()
         if not self.has_user(username):
             perm = 'elawdm'
@@ -41,14 +41,23 @@ class DeviceAuthorizer(DummyAuthorizer):
         return homedir
 
     def get_msg_login(self, username):
-        """TODO"""
+        """Greet user."""
         return f"Welcome aboard {username}"
+
+
+class FTPLiteHandler(FTPHandler):
+    """Tero Lite FTPd handler."""
+
+    def on_file_received(self, file):
+        """Send received file to device observers."""
+        device = db.Device.get(username=self.username)
+        device.send_photo_to_observers(file)
 
 
 def main():
     """Start FTPd Server."""
     authorizer = DeviceAuthorizer()
-    handler = FTPHandler
+    handler = FTPLiteHandler
     handler.authorizer = authorizer
     handler.banner = "Tero Lite FTPd ready."
 

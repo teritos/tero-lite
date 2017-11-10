@@ -1,27 +1,32 @@
 """Tero Lite Bot (for sure using Telegram)."""
 
 from telegram.ext import Updater, CommandHandler
+from telegram import Bot
+from telegram.utils import request
+
 import settings
 
 
-def start(bot, update):
-    """Greet user."""
-    _ = bot
-    update.message.reply_text('Hello World!')
+request.CON_POOL_SIZE = 50
+
+
+def get_bot():
+    """Returns a bot instance."""
+    return Bot(settings.TELEGRAM_TOKEN)
 
 
 def hello(bot, update):
     """Just says hello."""
     _ = bot
     update.message.reply_text(
-        f'Hello {update.message.from_user.first_name}'
+        f'Hello {update.message.from_user.id}'
     )
 
 
-updater = Updater(settings.TELEGRAM_TOKEN)  # pylint: disable=C0103
+if __name__ == '__main__':
+    updater = Updater(settings.TELEGRAM_TOKEN)  # pylint: disable=C0103
 
-updater.dispatcher.add_handler(CommandHandler('start', start))
-updater.dispatcher.add_handler(CommandHandler('hello', hello))
+    updater.dispatcher.add_handler(CommandHandler('hello', hello))
 
-updater.start_polling()
-updater.idle()
+    updater.start_polling()
+    updater.idle()
