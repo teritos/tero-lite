@@ -50,8 +50,9 @@ class FTPLiteHandler(FTPHandler):
 
     def on_file_received(self, file):
         """Send received file to device observers."""
-        device = db.Device.get(username=self.username)
-        device.send_photo_to_observers(file)
+        with db.db_session:
+            device = db.Device.get(username=self.username)
+            device.send_photo_to_telegram_users(file)
 
 
 def main():
