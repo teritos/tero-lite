@@ -57,7 +57,7 @@ class Device(db.Entity):
             self.telegram['users'].append(telegram_user)
 
     @db_session
-    def send_photo_to_observers(self, fpath):
+    def send_photo_to_telegram_users(self, fpath):
         """Send a photo to device observers."""
         from bot import get_bot
         bot = get_bot()
