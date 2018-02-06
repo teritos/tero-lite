@@ -1,15 +1,9 @@
 #!/usr/bin/env python
-
-# This code was taken from:
+# Code was taken from:
 # https://github.com/giampaolo/pyftpdlib/blob/master/demo/basic_ftpd.py
 # which has a MIT license and has the following copyright:
 # Copyright (C) 2007 Giampaolo Rodola' <g.rodola@gmail.com>.
-# Modified by: Emiliano Dalla Verde Marcozzi <edvm@fedoraproject.org>
-# to work for Tero Lite
-
-"""A basic FTP server which uses a DummyAuthorizer for managing 'virtual
-users', setting a limit for incoming connections.
-"""
+# Modified by (really minor modifications, all credits goes to author): Emiliano Dalla Verde Marcozzi <6564766d@gmail.com>
 
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.authorizers import AuthenticationFailed
@@ -20,6 +14,9 @@ import settings
 import os.path
 import os
 
+setup_django()
+from db.models import (Account, Device)
+
 
 class DeviceAuthorizer(DummyAuthorizer):
     """Authorize devices."""
@@ -29,7 +26,7 @@ class DeviceAuthorizer(DummyAuthorizer):
 
         try:
             Account.objects.get(username=username, password=password)
-        except Account.DoesNotExist:
+        except Exception:  # TODO: Catch DoesNotExist Django Exception, do not be a madafaka catch em all pokemon trainer
             raise AuthenticationFailed()
 
         if not self.has_user(username):
@@ -74,7 +71,6 @@ def setup_django():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
     import django
     django.setup()
-    from db.models import (Account, Device)
 
 
 def main():
@@ -97,5 +93,4 @@ def main():
 
 
 if __name__ == '__main__':
-    setup_django()
     main()
