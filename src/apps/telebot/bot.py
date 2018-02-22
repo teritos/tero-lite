@@ -23,10 +23,14 @@ def hello(bot, update):
     )
 
 
-if __name__ == '__main__':
+def run():
     updater = Updater(settings.TELEGRAM_TOKEN)  # pylint: disable=C0103
 
     updater.dispatcher.add_handler(CommandHandler('hello', hello))
 
     updater.start_polling()
     updater.idle()
+
+
+if __name__ == '__main__':
+    run()

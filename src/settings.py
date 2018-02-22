@@ -3,9 +3,10 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'secret') 
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'secret')
 DEBUG = True
 ALLOWED_HOSTS = []
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -15,7 +16,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'db',
+    'apps.ftpd',
+    'apps.telebot',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

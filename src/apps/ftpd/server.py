@@ -9,13 +9,22 @@ from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.authorizers import AuthenticationFailed
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
+from db.models import (Account)
 
 import settings
 import os.path
 import os
 
+
+def setup_django():
+    """Init Django."""
+    import os
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+    import django
+    django.setup()
+
+
 setup_django()
-from db.models import (Account, Device)
 
 
 class DeviceAuthorizer(DummyAuthorizer):
@@ -65,15 +74,7 @@ class FTPLiteHandler(FTPHandler):
             telegram_account.send_photo(file)
 
 
-def setup_django():
-    """Init Django."""
-    import os
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
-    import django
-    django.setup()
-
-
-def main():
+def run():
     """Start FTPd Server."""
     authorizer = DeviceAuthorizer()
     handler = FTPLiteHandler
@@ -93,4 +94,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    run()
