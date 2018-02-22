@@ -3,13 +3,14 @@
 # https://github.com/giampaolo/pyftpdlib/blob/master/demo/basic_ftpd.py
 # which has a MIT license and has the following copyright:
 # Copyright (C) 2007 Giampaolo Rodola' <g.rodola@gmail.com>.
-# Modified by (really minor modifications, all credits goes to author): Emiliano Dalla Verde Marcozzi <6564766d@gmail.com>
+# Adapted by Emiliano Dalla Verde Marcozzi <6564766d@gmail.com>
 
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.authorizers import AuthenticationFailed
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
-from db.models import (Account)
+from django.contrib.auth import authenticate
+from db.models import Account
 
 import settings
 import os.path
@@ -33,9 +34,8 @@ class DeviceAuthorizer(DummyAuthorizer):
     def validate_authentication(self, username, password, handler):
         """Validate device."""
 
-        try:
-            Account.objects.get(username=username, password=password)
-        except Exception:  # TODO: Catch DoesNotExist Django Exception, do not be a madafaka catch em all pokemon trainer
+        user = authenticate(username=username, password=password)
+        if user is None:
             raise AuthenticationFailed()
 
         if not self.has_user(username):
