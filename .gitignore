@@ -102,3 +102,4 @@ ENV/
 db.sqlite3
 foo.py
 .vscode
+ftp-files

@@ -2,7 +2,6 @@ from django.contrib import admin
 from db.models import (
     Account,
     Device,
-    TelegramAccount
 )
 
 
@@ -14,4 +13,3 @@ class DeviceAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Account)
 admin.site.register(Device, DeviceAdmin)
-admin.site.register(TelegramAccount)

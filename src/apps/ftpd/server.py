@@ -10,6 +10,7 @@ from pyftpdlib.authorizers import AuthenticationFailed
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 from django.contrib.auth import authenticate
+from apps.ftpd import signals
 from db.models import Account
 
 import settings
@@ -69,9 +70,11 @@ class FTPLiteHandler(FTPHandler):
 
     def on_file_received(self, file):
         """Send received file to device observers."""
-        account = Account.objects.get(username=self.username)
-        for telegram_account in account.telegram_accounts:
-            telegram_account.send_photo(file)
+        signals.motion_detected.send(
+            sender=self.__class__,
+            username=self.username,
+            filename=file
+        )
 
 
 def run():
